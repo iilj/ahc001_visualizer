@@ -4,7 +4,7 @@
     "description": "Visualizer for AHC001",
     "main": "dist/main.js",
     "scripts": {
-        "copy": "cpx -C static/** dist",
+        "copy": "cpx \"static/*.{html,ico}\" dist",
         "tsc": "tsc",
         "webpack": "webpack",
         "watch": "webpack-cli -w",
