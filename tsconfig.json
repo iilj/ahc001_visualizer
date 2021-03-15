@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonJS",
+        "target": "ES2020",
+        // "noImplicitAny": false,
+        "sourceMap": true,
+        "rootDir": "./typescript",
+        "outDir": "dist",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
