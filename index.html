@@ -1,0 +1,203 @@
+﻿<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>AHC001 Visualizer (Unofficial)</title>
+    <!-- Twitter card template -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@iiljj" />
+    <meta name="twitter:title" content="AHC001 Visualizer (Unofficial)" />
+    <meta
+      name="twitter:description"
+      content="AtCoder Heuristic Contest 001 のビジュアライザです．"
+    />
+    <meta
+      name="twitter:image"
+      content="https://iilj.github.io/txt/images/dog_shibainu_brown2.png"
+    />
+  </head>
+
+  <body>
+    <h1>AHC001 Visualizer (Unofficial)</h1>
+    <div style="display: flex">
+      <div id="div-canvas-parent"></div>
+      <div id="div-panel" style="margin-left: 10px">
+        <div>
+          <label>Input: <input type="file" id="file-in" /></label>
+        </div>
+        <div>
+          <label>Init/Output: <input type="file" id="file-out" /></label>
+        </div>
+        <div>
+          <label>Log: <input type="file" id="file-log" /></label>
+        </div>
+        <div>
+          <label
+            >ColorMap:
+            <select name="select-colormap" id="select-colormap">
+              <option value="vis">vis</option>
+              <option value="jet" selected>jet</option>
+              <option value="hsv">hsv</option>
+              <option value="hot">hot</option>
+              <option value="cool">cool</option>
+              <option value="spring">spring</option>
+              <option value="summer">summer</option>
+              <option value="autumn">autumn</option>
+              <option value="winter">winter</option>
+              <option value="gray">gray</option>
+            </select></label
+          >
+        </div>
+        <div>
+          <label
+            >Speed:
+            <input
+              type="number"
+              id="number-speed"
+              name="number-speed"
+              min="10"
+              max="1000"
+              value="200"
+            />
+            [step/frame]</label
+          >
+        </div>
+        <div>
+          <label
+            ><input
+              type="checkbox"
+              id="checkbox-disable-chart-update"
+              name="checkbox-disable-chart-update"
+            />
+            軽量モード（グラフを update しない代わりに高速）</label
+          >
+        </div>
+        <div>
+          <button id="btn-load">Load</button>
+          <button id="btn-play">Play</button>&nbsp;
+          <button class="btn-play-diff-step" data-diff-step="-1000">
+            -1000
+          </button>
+          <button class="btn-play-diff-step" data-diff-step="-100">-100</button>
+          <button class="btn-play-diff-step" data-diff-step="-10">-10</button>
+          <button class="btn-play-diff-step" data-diff-step="-1">-1</button
+          >&nbsp;
+          <button class="btn-play-diff-step" data-diff-step="1">+1</button>
+          <button class="btn-play-diff-step" data-diff-step="10">+10</button>
+          <button class="btn-play-diff-step" data-diff-step="100">+100</button>
+          <button class="btn-play-diff-step" data-diff-step="1000">
+            +1000
+          </button>
+        </div>
+
+        <div>
+          <label
+            >Progress:
+            <input
+              type="range"
+              name="input-range"
+              id="input-range"
+              value="0"
+              style="width: 400px"
+          /></label>
+          <span id="span-percentage">0</span> %
+        </div>
+        <div>Score: <span id="span-score">0 (0/0)</span></div>
+        <div>
+          <canvas id="canvas-color-map" width="550" height="100"></canvas>
+        </div>
+        <div id="div-canvas-score-chart-parent">
+          <canvas id="canvas-score-chart" width="550" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+    <script src="./bundle.js"></script>
+
+    <h2>説明</h2>
+    <div>
+      <p>
+        <a href="https://atcoder.jp/contests/ahc001"
+          >AtCoder Heuristic Contest 001 - AtCoder</a
+        >
+        のビジュアライザです．
+      </p>
+      <p>
+        公式に提供されている Rust 製ビジュアライザとは無関係に，TypeScript
+        で作りました．
+      </p>
+    </div>
+    <h2>簡単な使い方</h2>
+    <h3>出力確認モード</h3>
+    <div>
+      <ol>
+        <li>「Input:」欄で入力ファイルを選択します．</li>
+        <li>「Init/Output:」欄で出力ファイルを選択します．</li>
+        <li>
+          「Load」ボタンを押下すると，ビジュアライズ結果とスコアが表示されます．
+        </li>
+      </ol>
+    </div>
+    <h3>焼き鈍し経過再生モード</h3>
+    <div>
+      <ol>
+        <li>「Input:」欄で入力ファイルを選択します．</li>
+        <li>
+          「Init/Output:」欄で，焼き鈍しの初期解を出力したファイルを選択します．フォーマットは出力ファイルと同じです．
+        </li>
+        <li>
+          「Log:」欄で，焼き鈍しのログファイルを選択します．
+          <ul>
+            <li>フォーマットは，各行が「<code>i a b c d t</code>」です．</li>
+            <li>
+              <code>i</code> は 0-indexed の企業番号（矩形の番号）で，整数です．
+            </li>
+            <li>
+              <code>a, b, c, d</code> は出力と同じく，矩形の頂点を表す座標です．
+            </li>
+            <li>
+              <code>t</code> は焼き鈍し開始からの時間 [ミリ秒] で，小数です．
+            </li>
+            <li>焼き鈍しで更新される矩形のみ，ログに記録してください．</li>
+            <li>
+              サンプル：
+              <pre>
+34 8091 8264 8164 8265 3.965
+69 7276 1705 7277 1744 4.23
+13 2334 466 2367 467 4.326
+28 282 2985 372 2986 4.37
+70 2812 2315 2891 2316 4.415
+34 8091 8264 8190 8265 4.453
+29 7601 9206 7602 9252 4.507
+23 5128 8218 5129 8242 4.566
+17 5337 5444 5381 5445 4.611</pre
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          「Load」ボタンを押下すると，初期解のビジュアライズ結果およびスコアが表示されます．
+        </li>
+        <li>「Play」ボタンを押下すると，焼き鈍し経過が再生されます．</li>
+      </ol>
+    </div>
+    <h2>使ったもの</h2>
+    <ul>
+      <li>
+        <a href="https://github.com/pixijs/pixi.js"
+          >pixijs/pixi.js: The HTML5 Creation Engine: Create beautiful digital
+          content with the fastest, most flexible 2D WebGL renderer.</a
+        >
+      </li>
+      <li>
+        <a href="https://github.com/chartjs/Chart.js"
+          >chartjs/Chart.js: Simple HTML5 Charts using the &lt;canvas&gt; tag</a
+        >
+      </li>
+    </ul>
+    <h2>作った人</h2>
+    <ul>
+      <li><a href="https://github.com/iilj">iilj (iilj)</a></li>
+      <li><a href="https://twitter.com/iiljj">si (@iiljj) / Twitter</a></li>
+    </ul>
+  </body>
+</html>
