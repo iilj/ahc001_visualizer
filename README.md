@@ -1,6 +1,8 @@
 AHC001 Visualizer
 =====
 
+[![Build and Deploy](https://github.com/iilj/ahc001_visualizer/actions/workflows/main.yml/badge.svg)](https://github.com/iilj/ahc001_visualizer/actions/workflows/main.yml)
+
 ## これは何？
 
 [AtCoder Heuristic Contest 001 \- AtCoder](https://atcoder.jp/contests/ahc001) のビジュアライザです．
